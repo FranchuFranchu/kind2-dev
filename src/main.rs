@@ -188,7 +188,7 @@ fn test_runtime_compatibility() {
     let Ok(book) = Book::load(&q, base) else { continue; };
     print!("{:<30}: ", base);
     for rt in ["--ghc", "--hvm1", "--hvm2"] {
-      std::io::stdout().flush();
+      let _ = std::io::stdout().flush();
       let infos = get_infos(&book, "check", base, rt);
       if infos.0.len() == 0  {
         print!("\x1b[32;1m✅\x1b[0m ");
