@@ -1,7 +1,6 @@
-use crate::{*};
+use crate::*;
 
-use std::collections::BTreeMap;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 mod compile;
 mod format;
@@ -19,21 +18,17 @@ pub struct Book {
 }
 
 impl Book {
-
   pub fn new() -> Self {
-    Book {
-      defs: BTreeMap::new(),
-      fids: BTreeMap::new(),
-    }
+    Book { defs: BTreeMap::new(), fids: BTreeMap::new() }
   }
-  
-  pub fn load(name: &str) -> Result<Self, String> {
-    fn load_go(name: &str, book: &mut Book) -> Result<(), String> {
+
+  pub fn load(base: &str, name: &str) -> Result<Self, String> {
+    fn load_go(base: &str, name: &str, book: &mut Book) -> Result<(), String> {
       //println!("... {}", name);
       if !book.defs.contains_key(name) {
-        let file = format!("./{}.kind2", name);
+        let file = format!("{}/{}.kind2", base, name);
         let text = std::fs::read_to_string(&file).map_err(|_| format!("Could not read file: {}", file))?;
-        let fid  = book.get_file_id(&file);
+        let fid = book.get_file_id(&file);
         //println!("... parsing: {}", name);
         let defs = KindParser::new(&text).parse_book(fid)?;
         //println!("... parsed: {}", name);
@@ -46,17 +41,17 @@ impl Book {
           def_term.get_free_vars(im::Vector::new(), &mut dependencies);
           //println!("{} deps: {:?}", name, dependencies);
           for ref_name in dependencies {
-            load_go(&ref_name, book)?;
+            load_go(base, &ref_name, book)?;
           }
         }
       }
       return Ok(());
     }
     let mut book = Book::new();
-    load_go(name, &mut book)?;
-    load_go("String", &mut book)?;
-    load_go("String.cons", &mut book)?;
-    load_go("String.nil", &mut book)?;
+    load_go(base, name, &mut book)?;
+    load_go(base, "String", &mut book)?;
+    load_go(base, "String.cons", &mut book)?;
+    load_go(base, "String.nil", &mut book)?;
     //println!("DONE!");
     Ok(book)
   }
@@ -80,5 +75,4 @@ impl Book {
     }
     None
   }
-
 }

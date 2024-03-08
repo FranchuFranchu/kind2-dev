@@ -1,7 +1,6 @@
-use crate::{*};
+use crate::*;
 
 impl Book {
-
   pub fn show(&self) -> String {
     let mut book_str = String::new();
     for (name, term) in &self.defs {
@@ -9,5 +8,4 @@ impl Book {
     }
     book_str
   }
-
 }

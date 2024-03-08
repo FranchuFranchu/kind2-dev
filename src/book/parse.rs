@@ -1,10 +1,8 @@
-use crate::{*};
+use crate::*;
 
-use std::collections::BTreeMap;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 impl<'i> KindParser<'i> {
-
   pub fn parse_def(&mut self, fid: u64) -> Result<(String, Term), String> {
     self.skip_trivia();
     let nam = self.parse_name()?;
@@ -31,5 +29,4 @@ impl<'i> KindParser<'i> {
     }
     Ok(book)
   }
-
 }

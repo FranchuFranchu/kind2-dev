@@ -1,34 +1,77 @@
-use crate::{*};
+use crate::*;
 
 impl<'i> KindParser<'i> {
-
   pub fn parse_oper(&mut self) -> Result<Oper, String> {
     self.skip_trivia();
     match self.peek_one() {
-      Some('+') => { self.advance_one(); Ok(Oper::Add) }
-      Some('-') => { self.advance_one(); Ok(Oper::Sub) }
-      Some('*') => { self.advance_one(); Ok(Oper::Mul) }
-      Some('/') => { self.advance_one(); Ok(Oper::Div) }
-      Some('%') => { self.advance_one(); Ok(Oper::Mod) }
-      Some('=') => { self.consume("==")?; Ok(Oper::Eq) }
-      Some('!') => { self.consume("!=")?; Ok(Oper::Ne) }
-      Some('<') => {
-        match self.peek_many(2) {
-          Some("<=") => { self.advance_many(2); Ok(Oper::Lte) }
-          Some("<<") => { self.advance_many(2); Ok(Oper::Lsh) }
-          _ => { self.advance_one(); Ok(Oper::Lt) }
-        }
+      Some('+') => {
+        self.advance_one();
+        Ok(Oper::Add)
       }
-      Some('>') => {
-        match self.peek_many(2) {
-          Some(">=") => { self.advance_many(2); Ok(Oper::Gte) }
-          Some(">>") => { self.advance_many(2); Ok(Oper::Rsh) }
-          _ => { self.advance_one(); Ok(Oper::Gt) }
-        }
+      Some('-') => {
+        self.advance_one();
+        Ok(Oper::Sub)
       }
-      Some('&') => { self.advance_one(); Ok(Oper::And) }
-      Some('|') => { self.advance_one(); Ok(Oper::Or) }
-      Some('^') => { self.advance_one(); Ok(Oper::Xor) }
+      Some('*') => {
+        self.advance_one();
+        Ok(Oper::Mul)
+      }
+      Some('/') => {
+        self.advance_one();
+        Ok(Oper::Div)
+      }
+      Some('%') => {
+        self.advance_one();
+        Ok(Oper::Mod)
+      }
+      Some('=') => {
+        self.consume("==")?;
+        Ok(Oper::Eq)
+      }
+      Some('!') => {
+        self.consume("!=")?;
+        Ok(Oper::Ne)
+      }
+      Some('<') => match self.peek_many(2) {
+        Some("<=") => {
+          self.advance_many(2);
+          Ok(Oper::Lte)
+        }
+        Some("<<") => {
+          self.advance_many(2);
+          Ok(Oper::Lsh)
+        }
+        _ => {
+          self.advance_one();
+          Ok(Oper::Lt)
+        }
+      },
+      Some('>') => match self.peek_many(2) {
+        Some(">=") => {
+          self.advance_many(2);
+          Ok(Oper::Gte)
+        }
+        Some(">>") => {
+          self.advance_many(2);
+          Ok(Oper::Rsh)
+        }
+        _ => {
+          self.advance_one();
+          Ok(Oper::Gt)
+        }
+      },
+      Some('&') => {
+        self.advance_one();
+        Ok(Oper::And)
+      }
+      Some('|') => {
+        self.advance_one();
+        Ok(Oper::Or)
+      }
+      Some('^') => {
+        self.advance_one();
+        Ok(Oper::Xor)
+      }
       _ => self.expected("operator"),
     }
   }
@@ -160,9 +203,7 @@ impl<'i> KindParser<'i> {
             let src = Src::new(fid, ini, end);
             Ok(Term::Src { src, val: Box::new(Term::Num { val }) })
           }
-          _ => {
-            self.expected("numeric-expression")
-          }
+          _ => self.expected("numeric-expression"),
         }
       }
       Some('?') => {
@@ -215,5 +256,4 @@ impl<'i> KindParser<'i> {
       }
     }
   }
-
 }

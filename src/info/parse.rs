@@ -1,10 +1,9 @@
-use crate::{*};
+use crate::*;
 
 //./../main.rs//
 //./mod.rs//
 
 impl<'i> KindParser<'i> {
-
   pub fn parse_info(&mut self) -> Result<Info, String> {
     self.skip_trivia();
     match self.peek_one() {
@@ -34,12 +33,7 @@ impl<'i> KindParser<'i> {
             let bad = self.parse_term(0)?;
             let src = Src::from_u64(self.parse_u64()?);
             self.consume("}")?;
-            Ok(Info::Error {
-              exp: exp,
-              det: det,
-              bad: bad,
-              src: src,
-            })
+            Ok(Info::Error { exp, det, bad, src })
           }
           Some('s') => {
             self.consume("solve")?;
@@ -62,5 +56,4 @@ impl<'i> KindParser<'i> {
       _ => self.expected("# (start of info)"),
     }
   }
-
 }
